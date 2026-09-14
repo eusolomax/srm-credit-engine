@@ -53,7 +53,7 @@ public class Receivable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ReceivableStatus status;
+    private ReceivableStatus status = ReceivableStatus.AVAILABLE;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
