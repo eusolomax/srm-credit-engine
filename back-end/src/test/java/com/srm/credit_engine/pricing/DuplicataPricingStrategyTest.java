@@ -12,7 +12,7 @@ class DuplicataPricingStrategyTest {
 
     private static final BigDecimal USD_TO_BRL_RATE = new BigDecimal("5.4321");
 
-    private final DuplicataPricingStrategy strategy = new DuplicataPricingStrategy();
+    private final DuplicataPricingStrategy strategy = new DuplicataPricingStrategy(new BigDecimal("0.0100"));
 
     private BigDecimal roundToCents(BigDecimal value) {
         return value.setScale(2, RoundingMode.HALF_EVEN);
@@ -24,6 +24,18 @@ class DuplicataPricingStrategyTest {
         BigDecimal presentValue = strategy.calculatePresentValue(new BigDecimal("100000.00"), 3);
 
         assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("92859.94"));
+    }
+
+    // Retorna o valor presente utilizando o base rate definido em application properties
+    // Ou utilizando o valor default de 1%
+    @Test
+    void shouldUseConfiguredBaseRate() {
+        DuplicataPricingStrategy configuredStrategy =
+                new DuplicataPricingStrategy(new BigDecimal("0.0200"));
+
+        BigDecimal presentValue = configuredStrategy.calculatePresentValue(new BigDecimal("1000.00"), 1);
+
+        assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("966.18"));
     }
 
     // C3: DUPLICATA, R$100.000, 3 meses, (USD - câmbio 5,4321) → US$17.094,67

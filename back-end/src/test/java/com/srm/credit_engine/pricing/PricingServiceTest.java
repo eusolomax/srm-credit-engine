@@ -11,9 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PricingServiceTest {
 
+    // Adiciona o base rate padrão de 1% para os testes
     private final PricingService pricingService = new PricingService(
-            new DuplicataPricingStrategy(),
-            new ChequePricingStrategy());
+            new DuplicataPricingStrategy(new BigDecimal("0.0100")),
+            new ChequePricingStrategy(new BigDecimal("0.0100")));
 
     // Verifica se o resultado foi utilizado o strategy de Duplicata
     @Test
