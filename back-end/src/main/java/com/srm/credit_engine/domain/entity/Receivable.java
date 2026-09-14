@@ -53,13 +53,26 @@ public class Receivable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ReceivableStatus status;
+    private ReceivableStatus status = ReceivableStatus.AVAILABLE;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @OneToOne(mappedBy = "receivable")
     private Settlement settlement;
+
+    public Receivable(
+            BigDecimal faceValue,
+            ReceivableType type,
+            CurrencyCode paymentCurrency,
+            Integer termMonths,
+            LocalDate dueDate) {
+        this.faceValue = faceValue;
+        this.type = type;
+        this.paymentCurrency = paymentCurrency;
+        this.termMonths = termMonths;
+        this.dueDate = dueDate;
+    }
 
     @PrePersist
     void prePersist() {
