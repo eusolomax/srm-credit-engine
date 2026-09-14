@@ -61,6 +61,19 @@ public class Receivable {
     @OneToOne(mappedBy = "receivable")
     private Settlement settlement;
 
+    public Receivable(
+            BigDecimal faceValue,
+            ReceivableType type,
+            CurrencyCode paymentCurrency,
+            Integer termMonths,
+            LocalDate dueDate) {
+        this.faceValue = faceValue;
+        this.type = type;
+        this.paymentCurrency = paymentCurrency;
+        this.termMonths = termMonths;
+        this.dueDate = dueDate;
+    }
+
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
