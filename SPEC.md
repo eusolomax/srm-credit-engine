@@ -22,6 +22,7 @@ caso seja necessário alterá-la.
 
 ### Moedas suportadas:
 * O sistema inicialmente suportará BRL e USD, que são suficientes para os cenários apresentados nos Golden Cases.
+* O sistema tem uma estrutura de algoritmo que suporta a nova implementação de moedas sem grandes modificações nos códigos
 
 ### Sobre os recebíveis:
 
@@ -39,6 +40,9 @@ caso seja necessário alterá-la.
 ---
 
 # Perguntas que eu faria ao negócio:
+### Quais regras de moeda devem ser consideradas?
+O valor de face dos recebíveis é sempre informado em BRL? Em caso de liquidação em moeda estrangeira, o valor presente e o deságio devem ser apresentados na moeda de pagamento?
+
 ### Qual é a fonte oficial das taxas de câmbio em produção?
 O desafio permite o cadastro manual das taxas, mas em um ambiente real seria necessário definir o provedor oficial, sua confiabilidade e os requisitos de disponibilidade.
 

@@ -52,6 +52,19 @@ public class Settlement {
     @Column(name = "settled_at", nullable = false, updatable = false)
     private Instant settledAt;
 
+    public Settlement(
+            Receivable receivable,
+            BigDecimal presentValue,
+            BigDecimal discount,
+            CurrencyCode paymentCurrency,
+            BigDecimal exchangeRate) {
+        this.receivable = receivable;
+        this.presentValue = presentValue;
+        this.discount = discount;
+        this.paymentCurrency = paymentCurrency;
+        this.exchangeRate = exchangeRate;
+    }
+
     @PrePersist
     void prePersist() {
         this.settledAt = Instant.now();

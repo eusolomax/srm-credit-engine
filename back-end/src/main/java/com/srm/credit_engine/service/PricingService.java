@@ -1,9 +1,12 @@
-package com.srm.credit_engine.pricing;
+package com.srm.credit_engine.service;
 
 import java.math.BigDecimal;
 
 import com.srm.credit_engine.domain.enums.ReceivableType;
 
+import com.srm.credit_engine.pricing.ChequePricingStrategy;
+import com.srm.credit_engine.pricing.DuplicataPricingStrategy;
+import com.srm.credit_engine.pricing.PricingStrategy;
 import org.springframework.stereotype.Service;
 
 @Service
