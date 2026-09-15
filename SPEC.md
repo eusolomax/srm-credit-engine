@@ -22,6 +22,7 @@ caso seja necessário alterá-la.
 
 ### Moedas suportadas:
 * O sistema inicialmente suportará BRL e USD, que são suficientes para os cenários apresentados nos Golden Cases.
+* O sistema tem uma estrutura de algoritmo que suporta a nova implementação de moedas sem grandes modificações nos códigos
 
 ### Sobre os recebíveis:
 
