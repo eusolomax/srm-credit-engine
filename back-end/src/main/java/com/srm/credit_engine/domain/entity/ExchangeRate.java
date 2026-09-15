@@ -47,6 +47,17 @@ public class ExchangeRate {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    public ExchangeRate(
+            CurrencyCode fromCurrency,
+            CurrencyCode toCurrency,
+            BigDecimal rate,
+            Instant effectiveAt) {
+        this.fromCurrency = fromCurrency;
+        this.toCurrency = toCurrency;
+        this.rate = rate;
+        this.effectiveAt = effectiveAt;
+    }
+
     @PrePersist
     void prePersist() {
         this.createdAt = Instant.now();
