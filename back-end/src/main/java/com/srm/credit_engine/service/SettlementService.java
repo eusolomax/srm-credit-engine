@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.srm.credit_engine.domain.entity.ExchangeRate;
 import com.srm.credit_engine.domain.entity.Receivable;
@@ -100,5 +101,9 @@ public class SettlementService {
         receivable.setStatus(ReceivableStatus.SETTLED);
 
         return settlementRepository.save(settlement);
+    }
+
+    public List<Settlement> findAll() {
+        return settlementRepository.findAll();
     }
 }
