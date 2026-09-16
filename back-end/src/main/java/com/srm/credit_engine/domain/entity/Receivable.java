@@ -37,6 +37,9 @@ public class Receivable {
     @Column(name = "face_value", nullable = false, precision = 15, scale = 2)
     private BigDecimal faceValue;
 
+    @Column(nullable = false, length = 14)
+    private String assignor;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReceivableType type;
@@ -63,11 +66,13 @@ public class Receivable {
 
     public Receivable(
             BigDecimal faceValue,
+            String assignor,
             ReceivableType type,
             CurrencyCode paymentCurrency,
             Integer termMonths,
             LocalDate dueDate) {
         this.faceValue = faceValue;
+        this.assignor = assignor;
         this.type = type;
         this.paymentCurrency = paymentCurrency;
         this.termMonths = termMonths;
