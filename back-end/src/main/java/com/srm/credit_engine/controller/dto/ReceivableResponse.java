@@ -10,6 +10,7 @@ import com.srm.credit_engine.domain.enums.ReceivableType;
 
 public record ReceivableResponse(
         BigDecimal faceValue,
+        String assignor,
         ReceivableType type,
         CurrencyCode paymentCurrency,
         Integer termMonths,
