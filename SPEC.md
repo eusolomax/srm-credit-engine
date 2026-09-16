@@ -32,6 +32,11 @@ caso seja necessário alterá-la.
   * `SETTLED`: já liquidado.
 * Recebíveis vencidos não poderão ser liquidados. A operação deverá ser rejeitada caso a data de vencimento já tenha sido ultrapassada.
 
+### Identificação do cedente
+
+- O desafio exige filtro por cedente no extrato, mas não define uma entidade ou modelo específico para empresas cedentes.
+Para atender ao requisito sem expandir desnecessariamente o domínio, o cedente será representado diretamente no `Receivable`, sem entidade própria ou relacionamento com outra tabela.
+
 ### Liquidações:
 
 * Um recebível somente poderá ser liquidado uma vez. Tentativas de liquidar um recebível que já esteja no estado `SETTLED` serão rejeitadas.
