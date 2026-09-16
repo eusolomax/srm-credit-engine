@@ -14,6 +14,7 @@ import com.srm.credit_engine.domain.enums.CurrencyCode;
 import com.srm.credit_engine.domain.enums.ReceivableStatus;
 import com.srm.credit_engine.repository.SettlementRepository;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,14 @@ public class SettlementService {
     }
 
     @Transactional
-    public Settlement settle(Long receivableId) {
+    public Settlement settle(Long receivableId, String idempotencyKey) {
+        // Verificação de idempotência
+        Settlement existingSettlement = settlementRepository.findByIdempotencyKey(idempotencyKey).orElse(null);
+
+        if (existingSettlement != null) {
+            return existingSettlement;
+        }
+
         Receivable receivable = receivableService.findById(receivableId)
                 .orElseThrow(() -> new IllegalArgumentException("Receivable not found: " + receivableId));
 
@@ -96,11 +104,17 @@ public class SettlementService {
                 roundedPresentValue,
                 discount,
                 receivable.getPaymentCurrency(),
-                exchangeRateValue);
+                exchangeRateValue,
+                idempotencyKey);
 
         receivable.setStatus(ReceivableStatus.SETTLED);
 
-        return settlementRepository.save(settlement);
+        try {
+            return settlementRepository.saveAndFlush(settlement);
+        } catch (DataIntegrityViolationException exception) {
+            return settlementRepository.findByIdempotencyKey(idempotencyKey)
+                    .orElseThrow(() -> exception);
+        }
     }
 
     public List<Settlement> findAll() {
