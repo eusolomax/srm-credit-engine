@@ -54,8 +54,7 @@ class ReceivableControllerTest {
     void shouldCreateReceivable() throws Exception {
         Receivable receivable = createReceivable();
         Receivable savedReceivable = createReceivable();
-        savedReceivable.setId(1L);
-        savedReceivable.setCreatedAt(Instant.parse("2026-09-14T21:00:00Z"));
+        savedReceivable.setCreatedAt(Instant.parse("2026-01-01T21:00:00Z"));
         ReceivableResponse response = createResponse(savedReceivable);
         when(mapper.toEntity(any(CreateReceivableRequest.class))).thenReturn(receivable);
         when(service.save(receivable)).thenReturn(savedReceivable);
@@ -73,7 +72,6 @@ class ReceivableControllerTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.status").value("AVAILABLE"));
 
         var receivableCaptor = forClass(Receivable.class);
@@ -118,13 +116,12 @@ class ReceivableControllerTest {
     void shouldReturnExistingReceivable() throws Exception {
         Receivable receivable = createReceivable();
         receivable.setId(1L);
-        receivable.setCreatedAt(Instant.parse("2026-09-14T21:00:00Z"));
+        receivable.setCreatedAt(Instant.parse("2026-01-01T21:00:00Z"));
         when(service.findById(1L)).thenReturn(Optional.of(receivable));
         when(mapper.toResponse(receivable)).thenReturn(createResponse(receivable));
 
         mockMvc.perform(get("/receivables/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.type").value("DUPLICATA"))
                 .andExpect(jsonPath("$.paymentCurrency").value("BRL"))
                 .andExpect(jsonPath("$.status").value("AVAILABLE"));
@@ -155,7 +152,6 @@ class ReceivableControllerTest {
 
     private ReceivableResponse createResponse(Receivable receivable) {
         return new ReceivableResponse(
-                receivable.getId(),
                 receivable.getFaceValue(),
                 receivable.getType(),
                 receivable.getPaymentCurrency(),

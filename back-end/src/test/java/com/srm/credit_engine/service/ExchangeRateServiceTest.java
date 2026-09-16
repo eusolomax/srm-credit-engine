@@ -47,7 +47,7 @@ class ExchangeRateServiceTest {
     // Garante que a taxa mais recente válida seja buscada para o par informado.
     @Test
     void shouldFindLatestValidRateForCurrencyPair() {
-        Instant timestamp = Instant.parse("2026-09-14T12:00:00Z");
+        Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
         ExchangeRate exchangeRate = mock(ExchangeRate.class);
         when(repository.findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp))
                 .thenReturn(Optional.of(exchangeRate));
@@ -62,7 +62,7 @@ class ExchangeRateServiceTest {
     // Garante que a busca considere apenas cotações vigentes até o instante informado.
     @Test
     void shouldNotConsiderRateAfterRequestedTimestamp() {
-        Instant timestamp = Instant.parse("2026-09-14T12:00:00Z");
+        Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
         when(repository.findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp))
                 .thenReturn(Optional.empty());
 
@@ -76,7 +76,7 @@ class ExchangeRateServiceTest {
     // Garante que a busca retorne vazio quando não houver cotação válida para o par.
     @Test
     void shouldReturnEmptyWhenThereIsNoValidRateForCurrencyPair() {
-        Instant timestamp = Instant.parse("2026-09-14T12:00:00Z");
+        Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
         when(repository.findLatestValidRate(CurrencyCode.BRL, CurrencyCode.USD, timestamp))
                 .thenReturn(Optional.empty());
 
