@@ -1,5 +1,6 @@
 package com.srm.credit_engine.service;
 import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 import com.srm.credit_engine.controller.dto.CreatePricingSimulationRequest;
@@ -7,6 +8,7 @@ import com.srm.credit_engine.controller.dto.PricingResult;
 import com.srm.credit_engine.domain.entity.Receivable;
 import com.srm.credit_engine.domain.entity.Settlement;
 import com.srm.credit_engine.domain.enums.ReceivableStatus;
+import com.srm.credit_engine.domain.enums.CurrencyCode;
 import com.srm.credit_engine.repository.SettlementRepository;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -78,5 +80,13 @@ public class SettlementService {
 
     public List<Settlement> findAll() {
         return settlementRepository.findAll();
+    }
+
+    public List<Settlement> findByFilters(
+            String assignor,
+            CurrencyCode currency,
+            Instant fromInclusive,
+            Instant toExclusive) {
+        return settlementRepository.findByFilters(assignor, currency, fromInclusive, toExclusive);
     }
 }
