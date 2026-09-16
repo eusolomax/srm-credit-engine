@@ -10,6 +10,7 @@ import com.srm.credit_engine.service.SettlementService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,9 @@ public class SettlementController {
 
     @PostMapping
     public ResponseEntity<SettlementResponse> settle(@Valid @RequestBody CreateSettlementRequest request) {
-        Settlement settlement = settlementService.settle(request.receivableId());
+        Settlement settlement = settlementService.settle(
+                request.receivableId(),
+                request.idempotencyKey());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -67,6 +70,17 @@ public class SettlementController {
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(problem);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ProblemDetail> handleDataIntegrityViolation() {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unable to complete settlement");
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(problem);
     }
 }
