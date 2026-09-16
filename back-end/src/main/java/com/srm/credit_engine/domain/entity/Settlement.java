@@ -32,6 +32,9 @@ public class Settlement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "idempotency_key", nullable = false, unique = true, length = 64)
+    private String idempotencyKey;
+
     @OneToOne
     @JoinColumn(name = "receivable_id", nullable = false, unique = true)
     private Receivable receivable;
@@ -57,12 +60,14 @@ public class Settlement {
             BigDecimal presentValue,
             BigDecimal discount,
             CurrencyCode paymentCurrency,
-            BigDecimal exchangeRate) {
+            BigDecimal exchangeRate,
+            String idempotencyKey) {
         this.receivable = receivable;
         this.presentValue = presentValue;
         this.discount = discount;
         this.paymentCurrency = paymentCurrency;
         this.exchangeRate = exchangeRate;
+        this.idempotencyKey = idempotencyKey;
     }
 
     @PrePersist
