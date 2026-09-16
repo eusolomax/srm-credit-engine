@@ -12,6 +12,7 @@ import org.mapstruct.Mapping;
 public interface SettlementMapper {
 
     @Mapping(target = "receivableId", source = "receivable.id")
+    @Mapping(target = "assignor", source = "receivable.assignor")
     SettlementResponse toResponse(Settlement settlement);
 
     List<SettlementResponse> toResponse(List<Settlement> settlements);
