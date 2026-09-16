@@ -59,6 +59,7 @@ class SettlementControllerTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.receivableId").value(1))
+                .andExpect(jsonPath("$.assignor").value("12345678901"))
                 .andExpect(jsonPath("$.presentValue").value(92859.94))
                 .andExpect(jsonPath("$.paymentCurrency").value("BRL"));
 
@@ -110,6 +111,7 @@ class SettlementControllerTest {
     private Settlement settlement(Long receivableId) {
         Receivable receivable = new Receivable(
                 new BigDecimal("100000.00"),
+                "12345678901",
                 ReceivableType.DUPLICATA,
                 CurrencyCode.BRL,
                 3,
@@ -128,6 +130,7 @@ class SettlementControllerTest {
     private SettlementResponse response(Settlement settlement) {
         return new SettlementResponse(
                 settlement.getReceivable().getId(),
+                settlement.getReceivable().getAssignor(),
                 settlement.getPresentValue(),
                 settlement.getDiscount(),
                 settlement.getPaymentCurrency(),

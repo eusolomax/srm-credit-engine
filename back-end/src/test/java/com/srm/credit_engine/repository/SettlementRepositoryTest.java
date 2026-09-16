@@ -40,6 +40,7 @@ class SettlementRepositoryTest {
     private Receivable receivable() {
         return new Receivable(
                 new BigDecimal("100000.00"),
+                "12345678901",
                 ReceivableType.DUPLICATA,
                 CurrencyCode.BRL,
                 3,

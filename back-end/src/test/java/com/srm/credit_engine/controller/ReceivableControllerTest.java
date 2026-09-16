@@ -65,6 +65,7 @@ class ReceivableControllerTest {
                         .content("""
                                 {
                                   "faceValue": 100000.00,
+                                  "assignor": "12345678901",
                                   "type": "DUPLICATA",
                                   "paymentCurrency": "BRL",
                                   "termMonths": 3,
@@ -72,6 +73,7 @@ class ReceivableControllerTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.assignor").value("12345678901"))
                 .andExpect(jsonPath("$.status").value("AVAILABLE"));
 
         var receivableCaptor = forClass(Receivable.class);
@@ -92,6 +94,46 @@ class ReceivableControllerTest {
                                   "type": "DUPLICATA",
                                   "paymentCurrency": "BRL",
                                   "termMonths": 0,
+                                  "dueDate": "2026-12-14"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    // Garante que um assignor com menos de 11 caracteres seja rejeitado.
+    @Test
+    void shouldRejectAssignorShorterThanMinimum() throws Exception {
+        mockMvc.perform(post("/receivables")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "faceValue": 100000.00,
+                                  "assignor": "1234567890",
+                                  "type": "DUPLICATA",
+                                  "paymentCurrency": "BRL",
+                                  "termMonths": 3,
+                                  "dueDate": "2026-12-14"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(service);
+    }
+
+    // Garante que um assignor com mais de 14 caracteres seja rejeitado.
+    @Test
+    void shouldRejectAssignorLongerThanMaximum() throws Exception {
+        mockMvc.perform(post("/receivables")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "faceValue": 100000.00,
+                                  "assignor": "123456789012345",
+                                  "type": "DUPLICATA",
+                                  "paymentCurrency": "BRL",
+                                  "termMonths": 3,
                                   "dueDate": "2026-12-14"
                                 }
                                 """))
@@ -144,6 +186,7 @@ class ReceivableControllerTest {
     private Receivable createReceivable() {
         return new Receivable(
                 new BigDecimal("100000.00"),
+                "12345678901",
                 ReceivableType.DUPLICATA,
                 CurrencyCode.BRL,
                 3,
@@ -153,6 +196,7 @@ class ReceivableControllerTest {
     private ReceivableResponse createResponse(Receivable receivable) {
         return new ReceivableResponse(
                 receivable.getFaceValue(),
+                receivable.getAssignor(),
                 receivable.getType(),
                 receivable.getPaymentCurrency(),
                 receivable.getTermMonths(),

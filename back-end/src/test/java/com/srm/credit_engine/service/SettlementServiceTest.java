@@ -275,7 +275,7 @@ class SettlementServiceTest {
             CurrencyCode paymentCurrency,
             int termMonths,
             LocalDate dueDate) {
-        return new Receivable(faceValue, type, paymentCurrency, termMonths, dueDate);
+        return new Receivable(faceValue, "12345678901", type, paymentCurrency, termMonths, dueDate);
     }
 
 }
