@@ -46,14 +46,15 @@ class SettlementControllerTest {
     void shouldCreateSettlement() throws Exception {
         Settlement settlement = settlement(1L);
         SettlementResponse response = response(settlement);
-        when(service.settle(1L)).thenReturn(settlement);
+        when(service.settle(1L, "settlement-key")).thenReturn(settlement);
         when(mapper.toResponse(settlement)).thenReturn(response);
 
         mockMvc.perform(post("/settlements")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "receivableId": 1
+                                  "receivableId": 1,
+                                  "idempotencyKey": "settlement-key"
                                 }
                                 """))
                 .andExpect(status().isCreated())
@@ -61,7 +62,7 @@ class SettlementControllerTest {
                 .andExpect(jsonPath("$.presentValue").value(92859.94))
                 .andExpect(jsonPath("$.paymentCurrency").value("BRL"));
 
-        verify(service).settle(1L);
+        verify(service).settle(1L, "settlement-key");
         verify(mapper).toResponse(settlement);
     }
 
@@ -79,28 +80,30 @@ class SettlementControllerTest {
     // Garante que um recebível inexistente retorne 404 Not Found.
     @Test
     void shouldReturnNotFoundWhenReceivableDoesNotExist() throws Exception {
-        when(service.settle(1L)).thenThrow(new IllegalArgumentException());
+        when(service.settle(1L, "settlement-key"))
+                .thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(post("/settlements")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"receivableId\":1}"))
+                        .content("{\"receivableId\":1,\"idempotencyKey\":\"settlement-key\"}"))
                 .andExpect(status().isNotFound());
 
-        verify(service).settle(1L);
+        verify(service).settle(1L, "settlement-key");
         verifyNoInteractions(mapper);
     }
 
     // Garante que um recebível vencido ou já liquidado retorne 409 Conflict.
     @Test
     void shouldReturnConflictWhenReceivableIsOverdueOrNotAvailableForSettlement() throws Exception {
-        when(service.settle(1L)).thenThrow(new IllegalStateException());
+        when(service.settle(1L, "settlement-key"))
+                .thenThrow(new IllegalStateException());
 
         mockMvc.perform(post("/settlements")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"receivableId\":1}"))
+                        .content("{\"receivableId\":1,\"idempotencyKey\":\"settlement-key\"}"))
                 .andExpect(status().isConflict());
 
-        verify(service).settle(1L);
+        verify(service).settle(1L, "settlement-key");
         verifyNoInteractions(mapper);
     }
 
@@ -118,7 +121,8 @@ class SettlementControllerTest {
                 new BigDecimal("92859.94"),
                 new BigDecimal("7140.06"),
                 CurrencyCode.BRL,
-                null);
+                null,
+                "settlement-key");
     }
 
     private SettlementResponse response(Settlement settlement) {
