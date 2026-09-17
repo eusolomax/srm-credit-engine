@@ -8,5 +8,6 @@ public record PricingSimulationResponse(
         BigDecimal faceValue,
         BigDecimal presentValue,
         BigDecimal discount,
-        CurrencyCode paymentCurrency) {
+        CurrencyCode paymentCurrency,
+        BigDecimal exchangeRate) {
 }

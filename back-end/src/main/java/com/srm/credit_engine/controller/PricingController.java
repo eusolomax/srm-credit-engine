@@ -34,7 +34,8 @@ public class PricingController {
                 pricingResult.roundedFaceValue(),
                 pricingResult.roundedPresentValue(),
                 pricingResult.roundedDiscount(),
-                request.paymentCurrency()));
+                request.paymentCurrency(),
+                pricingResult.exchangeRateValue()));
     }
 
     @ExceptionHandler(IllegalStateException.class)
