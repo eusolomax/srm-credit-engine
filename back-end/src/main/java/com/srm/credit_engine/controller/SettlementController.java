@@ -74,7 +74,7 @@ public class SettlementController {
             // Se existe algum filtro, envia pro serviço correto
             // (Se existe filtro de periodo - converte LocalDate -> Instant)
             Instant fromInclusive = from == null ? null : from.atStartOfDay(ZoneOffset.UTC).toInstant();
-            Instant toExclusive = to == null ? null : to.atStartOfDay(ZoneOffset.UTC).toInstant();
+            Instant toExclusive = to == null ? null : to.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
 
             settlements = settlementService.findByFilters(
                     assignor,
