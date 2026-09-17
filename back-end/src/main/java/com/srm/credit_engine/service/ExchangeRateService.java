@@ -31,6 +31,6 @@ public class ExchangeRateService {
             CurrencyCode fromCurrency,
             CurrencyCode toCurrency,
             Instant timestamp) {
-        return exchangeRateRepository.findLatestValidRate(fromCurrency, toCurrency, timestamp);
+        return exchangeRateRepository.findLatestValidRate(fromCurrency.name(), toCurrency.name(), timestamp);
     }
 }

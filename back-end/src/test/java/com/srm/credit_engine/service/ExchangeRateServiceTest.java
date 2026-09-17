@@ -49,41 +49,41 @@ class ExchangeRateServiceTest {
     void shouldFindLatestValidRateForCurrencyPair() {
         Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
         ExchangeRate exchangeRate = mock(ExchangeRate.class);
-        when(repository.findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp))
+        when(repository.findLatestValidRate(CurrencyCode.USD.toString(), CurrencyCode.BRL.toString(), timestamp))
                 .thenReturn(Optional.of(exchangeRate));
 
         Optional<ExchangeRate> result = service.findLatestValidRate(
                 CurrencyCode.USD, CurrencyCode.BRL, timestamp);
 
         assertThat(result).containsSame(exchangeRate);
-        verify(repository).findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp);
+        verify(repository).findLatestValidRate(CurrencyCode.USD.toString(), CurrencyCode.BRL.toString(), timestamp);
     }
 
     // Garante que a busca considere apenas cotações vigentes até o instante informado.
     @Test
     void shouldNotConsiderRateAfterRequestedTimestamp() {
         Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
-        when(repository.findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp))
+        when(repository.findLatestValidRate(CurrencyCode.USD.toString(), CurrencyCode.BRL.toString(), timestamp))
                 .thenReturn(Optional.empty());
 
         Optional<ExchangeRate> result = service.findLatestValidRate(
                 CurrencyCode.USD, CurrencyCode.BRL, timestamp);
 
         assertThat(result).isEmpty();
-        verify(repository).findLatestValidRate(CurrencyCode.USD, CurrencyCode.BRL, timestamp);
+        verify(repository).findLatestValidRate(CurrencyCode.USD.toString(), CurrencyCode.BRL.toString(), timestamp);
     }
 
     // Garante que a busca retorne vazio quando não houver cotação válida para o par.
     @Test
     void shouldReturnEmptyWhenThereIsNoValidRateForCurrencyPair() {
         Instant timestamp = Instant.parse("2026-01-01T12:00:00Z");
-        when(repository.findLatestValidRate(CurrencyCode.BRL, CurrencyCode.USD, timestamp))
+        when(repository.findLatestValidRate(CurrencyCode.BRL.toString(), CurrencyCode.USD.toString(), timestamp))
                 .thenReturn(Optional.empty());
 
         Optional<ExchangeRate> result = service.findLatestValidRate(
                 CurrencyCode.BRL, CurrencyCode.USD, timestamp);
 
         assertThat(result).isEmpty();
-        verify(repository).findLatestValidRate(CurrencyCode.BRL, CurrencyCode.USD, timestamp);
+        verify(repository).findLatestValidRate(CurrencyCode.BRL.toString(), CurrencyCode.USD.toString(), timestamp);
     }
 }
