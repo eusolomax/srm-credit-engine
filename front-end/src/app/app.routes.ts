@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { PricingPageComponent } from './features/pricing/pricing-page.component';
 import { ReceivablesPageComponent } from './features/receivables/receivables-page.component';
 import { AppShellComponent } from './layout/app-shell.component';
 import { PlaceholderPageComponent } from './features/placeholder/placeholder-page.component';
@@ -19,12 +20,7 @@ export const routes: Routes = [
       },
       {
         path: 'pricing',
-        component: PlaceholderPageComponent,
-        data: {
-          eyebrow: 'Operação',
-          title: 'Pricing',
-          description: 'Simule o valor líquido de um recebível.',
-        },
+        component: PricingPageComponent,
       },
       {
         path: 'settlements',
