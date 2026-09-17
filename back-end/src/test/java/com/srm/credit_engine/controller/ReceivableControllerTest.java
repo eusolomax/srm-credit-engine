@@ -195,6 +195,7 @@ class ReceivableControllerTest {
 
     private ReceivableResponse createResponse(Receivable receivable) {
         return new ReceivableResponse(
+                receivable.getId(),
                 receivable.getFaceValue(),
                 receivable.getAssignor(),
                 receivable.getType(),
