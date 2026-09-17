@@ -283,6 +283,7 @@ class SettlementControllerTest {
         return new SettlementResponse(
                 settlement.getReceivable().getId(),
                 settlement.getReceivable().getAssignor(),
+                settlement.getReceivable().getFaceValue(),
                 settlement.getPresentValue(),
                 settlement.getDiscount(),
                 settlement.getPaymentCurrency(),

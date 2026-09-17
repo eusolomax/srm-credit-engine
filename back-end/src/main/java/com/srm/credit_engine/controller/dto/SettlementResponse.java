@@ -8,6 +8,7 @@ import com.srm.credit_engine.domain.enums.CurrencyCode;
 public record SettlementResponse(
         Long receivableId,
         String assignor,
+        BigDecimal faceValue,
         BigDecimal presentValue,
         BigDecimal discount,
         CurrencyCode paymentCurrency,
