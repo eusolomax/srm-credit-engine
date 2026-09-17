@@ -13,6 +13,7 @@ public interface SettlementMapper {
 
     @Mapping(target = "receivableId", source = "receivable.id")
     @Mapping(target = "assignor", source = "receivable.assignor")
+    @Mapping(target = "faceValue", source = "receivable.faceValue")
     SettlementResponse toResponse(Settlement settlement);
 
     List<SettlementResponse> toResponse(List<Settlement> settlements);
