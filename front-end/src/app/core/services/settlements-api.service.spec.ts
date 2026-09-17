@@ -41,4 +41,29 @@ describe('SettlementsApiService', () => {
 
     request.flush({});
   });
+
+  it('sends all provided settlement filters as query parameters', () => {
+    service
+      .getAll({
+        from: '2026-09-01',
+        to: '2026-09-30',
+        assignor: '12345678901',
+        currency: 'BRL',
+      })
+      .subscribe();
+
+    const request = http.expectOne(
+      (pendingRequest) =>
+        pendingRequest.url === '/api/settlements' &&
+        pendingRequest.method === 'GET',
+    );
+
+    expect(request.request.method).toBe('GET');
+    expect(request.request.params.get('from')).toBe('2026-09-01');
+    expect(request.request.params.get('to')).toBe('2026-09-30');
+    expect(request.request.params.get('assignor')).toBe('12345678901');
+    expect(request.request.params.get('currency')).toBe('BRL');
+
+    request.flush([]);
+  });
 });
