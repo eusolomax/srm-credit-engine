@@ -43,10 +43,11 @@ public class PricingService {
                 request.termMonths(),
                 request.type());
 
+        BigDecimal roundedPresentValueInBrl = presentValueInBrl
+                .setScale(2, RoundingMode.HALF_EVEN);
+
         BigDecimal exchangeRateValue = null;
         BigDecimal finalPresentValue = presentValueInBrl;
-        BigDecimal faceValueInPaymentCurrency = request.faceValue();
-        Instant instantTimeStamp = Instant.now();
 
         // Caso a moeda de pagamento seja diferente do padrão BRL
         // Calcule a taxa de câmbio da moeda -> BRL
@@ -54,34 +55,31 @@ public class PricingService {
             ExchangeRate exchangeRate = exchangeRateService.findLatestValidRate(
                             request.paymentCurrency(),
                             CurrencyCode.BRL,
-                            instantTimeStamp)
+                            Instant.now())
                     .orElseThrow(() -> new IllegalStateException(
                             String.format("No valid exchange rate for %s/BRL", request.paymentCurrency())));
 
             exchangeRateValue = exchangeRate.getRate();
 
-            // Faz a conversão para a moeda estrangeira
-            finalPresentValue = presentValueInBrl.divide(
-                    exchangeRateValue,
-                    MathContext.DECIMAL128);
-
-            // Faz a conversão do valor de face para a moeda estrangeira
-            // necessário para calcular o deságio
-            faceValueInPaymentCurrency = request.faceValue()
+            // Converte valor presente para a moeda estrangeira
+            finalPresentValue = roundedPresentValueInBrl
                     .divide(exchangeRateValue, MathContext.DECIMAL128);
         }
 
-        BigDecimal roundedFaceValue = faceValueInPaymentCurrency.setScale(2, RoundingMode.HALF_EVEN);
-        BigDecimal roundedPresentValue = finalPresentValue.setScale(2, RoundingMode.HALF_EVEN);
+        //Arredondamentos finais:
+        BigDecimal roundedFaceValue = request.faceValue()
+                .setScale(2, RoundingMode.HALF_EVEN);
 
-        // O deságio é a diferença entre o valor de face e o valor presente
-        BigDecimal roundedDiscount = faceValueInPaymentCurrency
-                .subtract(finalPresentValue)
+        BigDecimal roundedFinalPresentValue = finalPresentValue
+                .setScale(2, RoundingMode.HALF_EVEN);
+
+        BigDecimal roundedDiscount = request.faceValue()
+                .subtract(roundedPresentValueInBrl)
                 .setScale(2, RoundingMode.HALF_EVEN);
 
         return new PricingResult(
                 roundedFaceValue,
-                roundedPresentValue,
+                roundedFinalPresentValue,
                 roundedDiscount,
                 request.paymentCurrency(),
                 exchangeRateValue);

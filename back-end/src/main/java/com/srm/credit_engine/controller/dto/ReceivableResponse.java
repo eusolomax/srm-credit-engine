@@ -9,6 +9,7 @@ import com.srm.credit_engine.domain.enums.ReceivableStatus;
 import com.srm.credit_engine.domain.enums.ReceivableType;
 
 public record ReceivableResponse(
+        Long id,
         BigDecimal faceValue,
         String assignor,
         ReceivableType type,
