@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Optional;
 
 import com.srm.credit_engine.domain.entity.ExchangeRate;
-import com.srm.credit_engine.domain.enums.CurrencyCode;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
