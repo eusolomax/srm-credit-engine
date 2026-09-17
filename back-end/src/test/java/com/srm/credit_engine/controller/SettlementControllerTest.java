@@ -147,7 +147,7 @@ class SettlementControllerTest {
     void shouldFilterSettlementsByPeriod() throws Exception {
         List<Settlement> settlements = List.of(settlement(1L));
         Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 9, 30).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
         when(service.findByFilters(null, null, from, toExclusive)).thenReturn(settlements);
         when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
 
@@ -181,7 +181,7 @@ class SettlementControllerTest {
     void shouldCombineAssignorAndPeriodFilters() throws Exception {
         List<Settlement> settlements = List.of(settlement(1L));
         Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 9, 30).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
         when(service.findByFilters("12345678901", null, from, toExclusive))
                 .thenReturn(settlements);
         when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
@@ -200,7 +200,7 @@ class SettlementControllerTest {
     void shouldCombineCurrencyAndPeriodFilters() throws Exception {
         List<Settlement> settlements = List.of(settlement(1L));
         Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 9, 30).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
         when(service.findByFilters(null, CurrencyCode.BRL, from, toExclusive))
                 .thenReturn(settlements);
         when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
@@ -219,7 +219,7 @@ class SettlementControllerTest {
     void shouldCombineAssignorCurrencyAndPeriodFilters() throws Exception {
         List<Settlement> settlements = List.of(settlement(1L));
         Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 9, 30).atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
         when(service.findByFilters("12345678901", CurrencyCode.BRL, from, toExclusive))
                 .thenReturn(settlements);
         when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));

@@ -24,8 +24,8 @@ public interface SettlementRepository extends JpaRepository<Settlement, Long> {
             JOIN settlement.receivable receivable
             WHERE (:assignor IS NULL OR receivable.assignor = :assignor)
               AND (:currency IS NULL OR settlement.paymentCurrency = :currency)
-              AND (:fromInclusive IS NULL OR settlement.settledAt >= :fromInclusive)
-              AND (:toExclusive IS NULL OR settlement.settledAt <= :toExclusive)
+              AND (CAST(:fromInclusive AS DATE) IS NULL OR settlement.settledAt >= :fromInclusive)
+              AND (CAST(:toExclusive AS DATE) IS NULL OR settlement.settledAt < :toExclusive)
             """)
     List<Settlement> findByFilters(
             @Param("assignor") String assignor,
