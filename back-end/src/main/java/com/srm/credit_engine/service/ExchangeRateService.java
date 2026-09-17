@@ -20,6 +20,10 @@ public class ExchangeRateService {
     }
 
     public ExchangeRate save(ExchangeRate exchangeRate) {
+        if (exchangeRate.getFromCurrency() == exchangeRate.getToCurrency()) {
+            throw new IllegalArgumentException("Source and target currencies must be different");
+        }
+
         return exchangeRateRepository.save(exchangeRate);
     }
 
