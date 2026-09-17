@@ -1,0 +1,37 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/receivables" aria-label="Ir para recebíveis">
+      <span class="brand-mark">SRM</span>
+      <span>
+        <strong>Credit Engine</strong>
+        <small>Operação de recebíveis</small>
+      </span>
+    </a>
+
+    <span class="environment">Ambiente local</span>
+  </header>
+
+  <aside class="sidebar">
+    <p class="navigation-label">Navegação</p>
+
+    <nav aria-label="Navegação principal">
+      @for (item of navigationItems; track item.path) {
+        <a
+          class="navigation-link"
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span>{{ item.label }}</span>
+          <span class="navigation-arrow" aria-hidden="true">→</span>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-container">
+      <router-outlet />
+    </div>
+  </main>
+</div>
