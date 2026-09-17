@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PricingPageComponent } from './features/pricing/pricing-page.component';
 import { ReceivablesPageComponent } from './features/receivables/receivables-page.component';
 import { SettlementsPageComponent } from './features/settlements/settlements-page.component';
+import { ExchangeRatesPageComponent } from './features/exchange-rates/exchange-rates-page.component';
 import { AppShellComponent } from './layout/app-shell.component';
 import { PlaceholderPageComponent } from './features/placeholder/placeholder-page.component';
 
@@ -29,12 +30,7 @@ export const routes: Routes = [
       },
       {
         path: 'exchange-rates',
-        component: PlaceholderPageComponent,
-        data: {
-          eyebrow: 'Configuração',
-          title: 'Exchange Rates',
-          description: 'Consulte e cadastre taxas de câmbio.',
-        },
+        component: ExchangeRatesPageComponent,
       },
       {
         path: 'not-found',
