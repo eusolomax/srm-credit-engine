@@ -19,6 +19,7 @@ import type {
   ReceivableType,
 } from '../../core/models/receivable.model';
 import { ReceivablesApiService } from '../../core/services/receivables-api.service';
+import { SettlementsApiService } from '../../core/services/settlements-api.service';
 
 type ReceivableFormType = ReceivableType | '';
 type ReceivableFormCurrency = CurrencyCode | '';
@@ -49,6 +50,8 @@ const emptyFormValue = (): ReceivableFormModel => ({
 })
 export class ReceivablesPageComponent implements OnInit {
   private readonly receivablesApi = inject(ReceivablesApiService);
+  private readonly settlementsApi = inject(SettlementsApiService);
+  private readonly pendingSettlementKeys = new Map<number, string>();
 
   protected readonly receivables = signal<Receivable[]>([]);
   protected readonly isLoading = signal(false);
@@ -56,6 +59,9 @@ export class ReceivablesPageComponent implements OnInit {
   protected readonly loadError = signal<string | null>(null);
   protected readonly saveError = signal<string | null>(null);
   protected readonly successMessage = signal<string | null>(null);
+  protected readonly settlementInProgress = signal<number | null>(null);
+  protected readonly settlementError = signal<string | null>(null);
+  protected readonly settlementSuccessMessage = signal<string | null>(null);
 
   protected readonly formModel = signal<ReceivableFormModel>(emptyFormValue());
   protected readonly receivableForm = form(this.formModel, (receivable) => {
@@ -172,6 +178,64 @@ export class ReceivablesPageComponent implements OnInit {
           );
         },
       });
+  }
+
+  protected requestSettlement(receivable: Receivable): void {
+    if (
+      receivable.status !== 'AVAILABLE' ||
+      this.settlementInProgress() !== null
+    ) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Deseja liquidar o recebível #${receivable.id}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.settlementError.set(null);
+    this.settlementSuccessMessage.set(null);
+
+    const idempotencyKey =
+      this.pendingSettlementKeys.get(receivable.id) ?? crypto.randomUUID();
+
+    this.pendingSettlementKeys.set(receivable.id, idempotencyKey);
+    this.settlementInProgress.set(receivable.id);
+
+    this.settlementsApi
+      .settle(receivable.id, idempotencyKey)
+      .pipe(finalize(() => this.settlementInProgress.set(null)))
+      .subscribe({
+        next: () => {
+          this.receivables.update((currentReceivables) =>
+            currentReceivables.map((currentReceivable) =>
+              currentReceivable.id === receivable.id
+                ? { ...currentReceivable, status: 'SETTLED' }
+                : currentReceivable,
+            ),
+          );
+          this.pendingSettlementKeys.delete(receivable.id);
+          this.settlementSuccessMessage.set(
+            `Recebível #${receivable.id} liquidado com sucesso.`,
+          );
+        },
+        error: (error: unknown) => {
+          this.settlementError.set(
+            this.apiErrorMessage(error, 'Não foi possível liquidar o recebível.'),
+          );
+        },
+      });
+  }
+
+  protected isSettlementInProgress(receivableId: number): boolean {
+    return this.settlementInProgress() === receivableId;
+  }
+
+  protected hasPendingSettlement(receivableId: number): boolean {
+    return this.pendingSettlementKeys.has(receivableId);
   }
 
   protected formatMoney(value: number, currency: CurrencyCode): string {
