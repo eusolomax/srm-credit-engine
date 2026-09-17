@@ -46,10 +46,10 @@ O projeto utiliza **H2** como banco principal para facilitar a execução local 
 Entre na pasta:
 
 ```bash
-cd backend
-````
+cd back-end
+```
 
-O profile padrão é o `h2`, portanto a aplicação pode ser iniciada diretamente:
+Por padrão, a aplicação utiliza H2 em memória e pode ser iniciada diretamente:
 
 ```bash
 ./mvnw spring-boot:run
@@ -63,11 +63,20 @@ http://localhost:8080
 
 ### Executando com PostgreSQL
 
-Também é possível executar utilizando PostgreSQL através do profile:
+Para executar utilizando PostgreSQL, use o profile `postgres` e informe as variáveis de ambiente do banco:
 
 ```bash
+DB_NAME=srm_credit_engine \
+DB_USERNAME=meu_usuario \
+DB_PASSWORD=minha_senha \
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
+
+As variáveis são utilizadas para configurar a conexão com o banco PostgreSQL:
+
+- `DB_NAME`: nome do banco de dados;
+- `DB_USERNAME`: usuário do banco;
+- `DB_PASSWORD`: senha do banco.
 
 Nesse caso, é necessário ter um PostgreSQL disponível e criar o banco:
 
@@ -75,32 +84,12 @@ Nesse caso, é necessário ter um PostgreSQL disponível e criar o banco:
 CREATE DATABASE srm_credit_engine;
 ```
 
-Depois, configure as credenciais em:
-
-```text
-backend/src/main/resources/application-postgres.properties
-```
-
-Exemplo:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/srm_credit_engine
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
-spring.jpa.properties.hibernate.format_sql=true
-
-spring.datasource.driver-class-name=org.postgresql.Driver
-```
-
 ### Profiles disponíveis
 
 | Profile    | Banco         | Execução                                                     |
 | ---------- | ------------- | ------------------------------------------------------------ |
 | `h2`       | H2 em memória | `./mvnw spring-boot:run`                                     |
-| `postgres` | PostgreSQL    | `./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres` |
+| `postgres` | PostgreSQL    | Variáveis `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` + profile `postgres` |
 
 O H2 é utilizado por padrão para simplificar a execução do projeto. O PostgreSQL permanece disponível como alternativa para execução com banco relacional externo.
 
@@ -111,7 +100,7 @@ O H2 é utilizado por padrão para simplificar a execução do projeto. O Postgr
 Entre na pasta:
 
 ```bash
-cd frontend
+cd front-end
 ```
 
 Instale as dependências:
@@ -175,7 +164,7 @@ Os três casos possuem cobertura automatizada.
 Para executar os testes do backend:
 
 ```bash
-cd backend
+cd back-end
 ./mvnw test
 ```
 
