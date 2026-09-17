@@ -1,0 +1,189 @@
+# SRM Credit Engine
+
+Sistema para precificação e liquidação de recebíveis em múltiplas moedas, desenvolvido como parte do desafio técnico da SRM Asset.
+
+O sistema contempla o ciclo principal de um recebível: cadastro, precificação, consulta de câmbio, liquidação e consulta do extrato de liquidações.
+
+---
+
+## Stack
+
+### Backend
+
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- H2
+- Maven
+
+### Frontend
+
+- Angular
+- TypeScript
+- RxJS
+
+### Documentação
+
+- OpenAPI / Swagger
+
+### Decisão sobre a stack:
+
+**Java 21 + Spring Boot** foram escolhidos pela tipagem forte e pelo ecossistema maduro para aplicações transacionais, além de facilitarem a separação entre API, regras de negócio e persistência.
+
+**PostgreSQL** foi escolhido como banco relacional por atender aos requisitos de integridade referencial e transações necessárias para o fluxo de liquidação.
+
+**Angular + TypeScript** permitem manter tipagem estática também no frontend e uma separação clara entre apresentação, estado e comunicação com a API.
+
+O projeto utiliza **H2** como banco principal para facilitar a execução local sem a necessidade de configurar um banco externo.
+
+---
+
+## Como executar
+
+### 1. Backend
+
+Entre na pasta:
+
+```bash
+cd backend
+````
+
+O profile padrão é o `h2`, portanto a aplicação pode ser iniciada diretamente:
+
+```bash
+./mvnw spring-boot:run
+```
+
+A API estará disponível em:
+
+```text
+http://localhost:8080
+```
+
+### Executando com PostgreSQL
+
+Também é possível executar utilizando PostgreSQL através do profile:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres
+```
+
+Nesse caso, é necessário ter um PostgreSQL disponível e criar o banco:
+
+```sql
+CREATE DATABASE srm_credit_engine;
+```
+
+Depois, configure as credenciais em:
+
+```text
+backend/src/main/resources/application-postgres.properties
+```
+
+Exemplo:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/srm_credit_engine
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+```
+
+### Profiles disponíveis
+
+| Profile    | Banco         | Execução                                                     |
+| ---------- | ------------- | ------------------------------------------------------------ |
+| `h2`       | H2 em memória | `./mvnw spring-boot:run`                                     |
+| `postgres` | PostgreSQL    | `./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres` |
+
+O H2 é utilizado por padrão para simplificar a execução do projeto. O PostgreSQL permanece disponível como alternativa para execução com banco relacional externo.
+
+---
+
+### 2. Frontend
+
+Entre na pasta:
+
+```bash
+cd frontend
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Inicie a aplicação:
+
+```bash
+ng serve
+```
+
+A aplicação estará disponível em:
+
+```text
+http://localhost:4200
+```
+
+---
+
+## API
+
+A documentação da API está disponível através do Swagger:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+## Design
+
+O backend utiliza uma arquitetura em camadas, separando API (Controller), aplicação/regra de negócio (Services) e persistência (Repository).
+
+O cálculo de precificação utiliza o padrão **Strategy** como o desafio solicita, permitindo que a regra de spread varie de acordo com o tipo do recebível sem concentrar todas as regras em condicionais.
+
+As regras financeiras, premissas de negócio, precisão numérica e modelo de dados estão documentados em [`SPEC.md`](./SPEC.md).
+
+Decisões de escopo e funcionalidades deliberadamente simplificadas estão registradas em [`DECISIONS.md`](./DECISIONS.md).
+
+---
+
+## Golden Cases
+
+O motor de precificação deve reproduzir os casos de referência do desafio ao centavo:
+
+| #  | Tipo                | Valor de face |   Prazo | Moeda pgto. | Câmbio (BRL/USD) | Valor presente esperado |     Deságio |
+| -- | ------------------- | ------------: | ------: | ----------- | ---------------: | ----------------------: | ----------: |
+| C1 | Duplicata Mercantil | R$ 100.000,00 | 3 meses | BRL         |                — |        **R$ 92.859,94** | R$ 7.140,06 |
+| C2 | Cheque Pré-datado   |  R$ 25.000,00 | 2 meses | BRL         |                — |        **R$ 23.337,77** | R$ 1.662,23 |
+| C3 | Duplicata Mercantil | R$ 100.000,00 | 3 meses | USD         |           5,4321 |       **US$ 17.094,67** | R$ 7.140,06 |
+
+Os três casos possuem cobertura automatizada.
+
+---
+
+## Testes
+
+Para executar os testes do backend:
+
+```bash
+cd backend
+./mvnw test
+```
+
+---
+
+## Documentação adicional
+
+* [`SPEC.md`](./SPEC.md) — premissas de negócio, precisão numérica, regras de câmbio e modelo de dados.
+* [`DECISIONS.md`](./DECISIONS.md) — decisões de escopo e funcionalidades não implementadas.
+* [`REVIEW.md`](./REVIEW.md) — code review reverso do desafio.
+* [`AI_USAGE.md`](./AI_USAGE.md) — uso de IA durante o desenvolvimento, erros identificados e decisões mantidas sob responsabilidade do desenvolvedor.
