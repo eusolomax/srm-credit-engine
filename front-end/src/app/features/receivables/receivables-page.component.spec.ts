@@ -54,6 +54,7 @@ function createSettlement(receivableId: number): Settlement {
   return {
     receivableId,
     assignor: '12345678901',
+    faceValue: 100000,
     presentValue: 92859.94,
     discount: 7140.06,
     paymentCurrency: 'BRL',

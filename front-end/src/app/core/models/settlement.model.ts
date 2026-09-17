@@ -8,6 +8,7 @@ export interface CreateSettlementRequest {
 export interface Settlement {
   receivableId: number;
   assignor: string;
+  faceValue: number;
   presentValue: number;
   discount: number;
   paymentCurrency: CurrencyCode;
