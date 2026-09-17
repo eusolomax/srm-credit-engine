@@ -1,0 +1,167 @@
+<section class="exchange-rates-page" aria-labelledby="exchange-rates-title">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Configuração</p>
+      <h1 id="exchange-rates-title">Taxas de câmbio</h1>
+      <p class="page-description">
+        Cadastre taxas de vigência para as operações em diferentes moedas.
+      </p>
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <section class="panel list-panel" aria-labelledby="rates-list-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Histórico</p>
+          <h2 id="rates-list-title">Taxas cadastradas</h2>
+        </div>
+        @if (!isLoading() && !loadError()) {
+          <span class="count-label">{{ exchangeRates().length }} registros</span>
+        }
+      </div>
+
+      @if (isLoading()) {
+        <div class="feedback loading" role="status">Carregando taxas...</div>
+      }
+
+      @if (loadError(); as errorMessage) {
+        <div class="feedback error" role="alert">
+          <strong>Não foi possível carregar as taxas.</strong>
+          <span>{{ errorMessage }}</span>
+          <button type="button" class="text-button" (click)="loadExchangeRates()">
+            Tentar novamente
+          </button>
+        </div>
+      }
+
+      @if (!isLoading() && !loadError() && exchangeRates().length === 0) {
+        <div class="feedback empty">
+          <strong>Nenhuma taxa cadastrada.</strong>
+          <span>Use o formulário ao lado para adicionar uma cotação.</span>
+        </div>
+      }
+
+      @if (!isLoading() && !loadError() && exchangeRates().length > 0) {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Origem</th>
+                <th scope="col">Destino</th>
+                <th scope="col">Taxa</th>
+                <th scope="col">Vigência</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (exchangeRate of exchangeRates(); track exchangeRate.effectiveAt + exchangeRate.fromCurrency + exchangeRate.toCurrency) {
+                <tr>
+                  <td class="currency-cell">{{ exchangeRate.fromCurrency }}</td>
+                  <td class="currency-cell">{{ exchangeRate.toCurrency }}</td>
+                  <td class="rate-cell">{{ formatRate(exchangeRate.rate) }}</td>
+                  <td>{{ exchangeRate.effectiveAt | date: 'dd/MM/yyyy HH:mm' : 'UTC' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="new-rate-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Novo registro</p>
+          <h2 id="new-rate-title">Cadastrar taxa</h2>
+        </div>
+      </div>
+
+      @if (successMessage(); as message) {
+        <div class="feedback success" role="status">{{ message }}</div>
+      }
+
+      @if (saveError(); as errorMessage) {
+        <div class="feedback error" role="alert">{{ errorMessage }}</div>
+      }
+
+      <form (submit)="submitForm($event)">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="fromCurrency">Moeda de origem</label>
+            <select id="fromCurrency" [formField]="exchangeRateForm.fromCurrency">
+              <option value="">Selecione</option>
+              <option value="BRL">BRL</option>
+              <option value="USD">USD</option>
+            </select>
+            @if (
+              exchangeRateForm.fromCurrency().touched() &&
+              exchangeRateForm.fromCurrency().invalid()
+            ) {
+              <small class="field-error">Selecione a moeda de origem.</small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="toCurrency">Moeda de destino</label>
+            <select id="toCurrency" [formField]="exchangeRateForm.toCurrency">
+              <option value="">Selecione</option>
+              <option value="BRL">BRL</option>
+              <option value="USD">USD</option>
+            </select>
+            @if (
+              (exchangeRateForm.toCurrency().touched() || formSubmitted()) &&
+              exchangeRateForm.toCurrency().invalid()
+            ) {
+              @if (isSameCurrency()) {
+                <small class="field-error">
+                  A moeda de origem deve ser diferente da moeda de destino.
+                </small>
+              } @else {
+                <small class="field-error">Selecione a moeda de destino.</small>
+              }
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="rate">Taxa</label>
+          <input
+            id="rate"
+            type="number"
+            inputmode="decimal"
+            step="0.0001"
+            placeholder="Ex.: 5,4321"
+            [formField]="exchangeRateForm.rate"
+          />
+          @if (exchangeRateForm.rate().touched() && exchangeRateForm.rate().invalid()) {
+            <small class="field-error">Informe uma taxa maior que zero.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="effectiveAt">Data e hora de vigência</label>
+          <input
+            id="effectiveAt"
+            type="datetime-local"
+            step="1"
+            [formField]="exchangeRateForm.effectiveAt"
+          />
+          @if (
+            exchangeRateForm.effectiveAt().touched() &&
+            exchangeRateForm.effectiveAt().invalid()
+          ) {
+            <small class="field-error">Informe a vigência da taxa.</small>
+          }
+        </div>
+
+        <button class="primary-button" type="submit" [disabled]="isSaving()">
+          @if (isSaving()) {
+            Cadastrando...
+          } @else {
+            Cadastrar taxa
+          }
+        </button>
+      </form>
+    </section>
+  </div>
+</section>
