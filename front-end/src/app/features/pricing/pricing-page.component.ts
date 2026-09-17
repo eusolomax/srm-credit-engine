@@ -125,6 +125,13 @@ export class PricingPageComponent {
     }).format(value);
   }
 
+  protected formatExchangeRate(exchangeRate: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 4,
+      maximumFractionDigits: 8,
+    }).format(exchangeRate);
+  }
+
   private apiErrorMessage(error: unknown, fallback: string): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
