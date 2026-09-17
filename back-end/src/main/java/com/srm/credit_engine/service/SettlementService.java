@@ -36,7 +36,14 @@ public class SettlementService {
         // Verificação de idempotência
         Settlement existingSettlement = settlementRepository.findByIdempotencyKey(idempotencyKey).orElse(null);
 
+        // Se existir um settlement com essa idempotency key:
         if (existingSettlement != null) {
+            // Se o ID do receivable não for igual ao do settlement encontrado:
+            if (!existingSettlement.getReceivable().getId().equals(receivableId)) {
+                throw new IllegalStateException("Idempotency key already used for another receivable");
+            }
+
+            // Apenas retorne o settlement
             return existingSettlement;
         }
 

@@ -19,12 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SettlementServiceTest {
 
@@ -133,6 +128,7 @@ class SettlementServiceTest {
                 CurrencyCode.BRL,
                 3,
                 LocalDate.now().plusMonths(3));
+        receivable.setId(1L);
         stubAvailableReceivable(receivable);
         when(pricingService.calculatePricing(any(CreatePricingSimulationRequest.class)))
                 .thenReturn(new PricingResult(
@@ -153,6 +149,41 @@ class SettlementServiceTest {
         verify(settlementRepository).findByIdempotencyKey("same-operation-key");
         verify(settlementRepository, org.mockito.Mockito.never())
                 .saveAndFlush(any(Settlement.class));
+        verifyNoInteractions(receivableService, pricingService);
+    }
+
+    @Test
+    void shouldRejectIdempotencyKeyUsedForAnotherReceivable() {
+        Receivable existingReceivable = receivable(
+                new BigDecimal("100000.00"),
+                ReceivableType.DUPLICATA,
+                CurrencyCode.BRL,
+                3,
+                LocalDate.now().plusMonths(3));
+        existingReceivable.setId(1L);
+
+        Settlement existingSettlement = new Settlement(
+                existingReceivable,
+                new BigDecimal("92859.94"),
+                new BigDecimal("7140.06"),
+                CurrencyCode.BRL,
+                null,
+                "same-operation-key");
+
+        when(settlementRepository.findByIdempotencyKey("same-operation-key"))
+                .thenReturn(Optional.of(existingSettlement));
+
+        assertThatThrownBy(() ->
+                service.settle(2L, "same-operation-key"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Idempotency key already used for another receivable");
+
+        verify(settlementRepository)
+                .findByIdempotencyKey("same-operation-key");
+
+        verify(settlementRepository, never())
+                .saveAndFlush(any(Settlement.class));
+
         verifyNoInteractions(receivableService, pricingService);
     }
 
