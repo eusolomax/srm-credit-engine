@@ -1,0 +1,62 @@
+:host {
+  display: block;
+}
+
+.placeholder-page {
+  max-width: 42rem;
+  padding: clamp(1.5rem, 5vw, 3rem) 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #2f8f9d;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #173f5f;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.description {
+  max-width: 34rem;
+  margin: 1rem 0 0;
+  color: #607080;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.coming-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 2rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #d7e4e8;
+  border-radius: 0.5rem;
+  background: #f8fbfc;
+  color: #52616d;
+  font-size: 0.85rem;
+}
+
+.coming-soon-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #2f8f9d;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 2rem;
+  color: #173f5f;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
