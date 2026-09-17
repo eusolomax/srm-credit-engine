@@ -1,5 +1,6 @@
 package com.srm.credit_engine.service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,12 @@ class ExchangeRateServiceTest {
     // Garante que uma nova cotação seja encaminhada ao repositório e retornada.
     @Test
     void shouldSaveExchangeRate() {
-        ExchangeRate exchangeRate = mock(ExchangeRate.class);
+        ExchangeRate exchangeRate = new ExchangeRate(
+                CurrencyCode.USD,
+                CurrencyCode.BRL,
+                new BigDecimal("5.4321"),
+                Instant.parse("2026-01-01T12:00:00Z"));
+
         when(repository.save(exchangeRate)).thenReturn(exchangeRate);
 
         ExchangeRate result = service.save(exchangeRate);
