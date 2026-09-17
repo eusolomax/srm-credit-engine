@@ -1,0 +1,140 @@
+<section class="pricing-page" aria-labelledby="pricing-title">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Operação</p>
+      <h1 id="pricing-title">Simulação de pricing</h1>
+      <p class="page-description">
+        Consulte o valor presente de um recebível antes da operação.
+      </p>
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <section class="panel form-panel" aria-labelledby="pricing-form-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Parâmetros</p>
+          <h2 id="pricing-form-title">Dados da simulação</h2>
+        </div>
+      </div>
+
+      <form [formRoot]="pricingForm" (submit)="simulate()">
+        <div class="form-field">
+          <label for="faceValue">Valor de face</label>
+          <input
+            id="faceValue"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            placeholder="0,00"
+            [formField]="pricingForm.faceValue"
+          />
+          @if (pricingForm.faceValue().touched() && pricingForm.faceValue().invalid()) {
+            <small class="field-error">Informe um valor maior que zero.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="type">Tipo</label>
+          <select id="type" [formField]="pricingForm.type">
+            <option value="">Selecione</option>
+            <option value="DUPLICATA">Duplicata mercantil</option>
+            <option value="CHEQUE">Cheque pré-datado</option>
+          </select>
+          @if (pricingForm.type().touched() && pricingForm.type().invalid()) {
+            <small class="field-error">Selecione o tipo.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="paymentCurrency">Moeda de pagamento</label>
+          <select id="paymentCurrency" [formField]="pricingForm.paymentCurrency">
+            <option value="">Selecione</option>
+            <option value="BRL">BRL</option>
+            <option value="USD">USD</option>
+          </select>
+          @if (
+            pricingForm.paymentCurrency().touched() &&
+            pricingForm.paymentCurrency().invalid()
+          ) {
+            <small class="field-error">Selecione a moeda.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="termMonths">Prazo em meses</label>
+          <input
+            id="termMonths"
+            type="number"
+            inputmode="numeric"
+            step="1"
+            placeholder="Ex.: 3"
+            [formField]="pricingForm.termMonths"
+          />
+          @if (pricingForm.termMonths().touched() && pricingForm.termMonths().invalid()) {
+            <small class="field-error">Informe um prazo positivo.</small>
+          }
+        </div>
+
+        <button class="primary-button" type="submit" [disabled]="isSimulating()">
+          @if (isSimulating()) {
+            Simulando...
+          } @else {
+            Simular
+          }
+        </button>
+      </form>
+    </section>
+
+    <section class="panel result-panel" aria-labelledby="pricing-result-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Resultado</p>
+          <h2 id="pricing-result-title">Valores calculados</h2>
+        </div>
+        @if (simulationResult(); as result) {
+          <span class="currency-badge">{{ result.paymentCurrency }}</span>
+        }
+      </div>
+
+      @if (isSimulating()) {
+        <div class="feedback loading" role="status">Calculando simulação...</div>
+      }
+
+      @if (simulationError(); as errorMessage) {
+        <div class="feedback error" role="alert">
+          <strong>Não foi possível concluir a simulação.</strong>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      @if (!isSimulating() && !simulationError() && !simulationResult()) {
+        <div class="feedback initial">
+          <strong>Nenhuma simulação realizada.</strong>
+          <span>Preencha os dados e clique em “Simular”.</span>
+        </div>
+      }
+
+      @if (simulationResult(); as result) {
+        <div class="result-content" aria-live="polite">
+          <div class="result-item">
+            <span>Valor de face</span>
+            <strong>{{ formatMoney(result.faceValue, 'BRL') }}</strong>
+          </div>
+          <div class="result-item highlight">
+            <span>Valor presente</span>
+            <strong>{{ formatMoney(result.presentValue, result.paymentCurrency) }}</strong>
+          </div>
+          <div class="result-item">
+            <span>Deságio</span>
+            <strong>{{ formatMoney(result.discount, 'BRL') }}</strong>
+          </div>
+          <div class="result-item currency-row">
+            <span>Moeda de pagamento</span>
+            <strong>{{ result.paymentCurrency }}</strong>
+          </div>
+        </div>
+      }
+    </section>
+  </div>
+</section>
