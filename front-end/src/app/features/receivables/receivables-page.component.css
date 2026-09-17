@@ -143,13 +143,24 @@ tbody tr:hover {
   color: #5c6a75;
 }
 
-.action-placeholder {
+.settle-button {
   padding: 0.35rem 0.55rem;
   border: 1px solid #dce3e8;
   border-radius: 0.4rem;
-  background: #f8fafb;
-  color: #84919c;
+  background: #e6f0f5;
+  color: #173f5f;
+  cursor: pointer;
   font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.settle-button:hover:not(:disabled) {
+  background: #d5e7ee;
+}
+
+.settle-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .feedback {

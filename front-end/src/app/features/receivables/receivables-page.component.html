@@ -21,6 +21,18 @@
         }
       </div>
 
+      @if (settlementSuccessMessage(); as message) {
+        <div class="feedback success" role="status">{{ message }}</div>
+      }
+
+      @if (settlementError(); as errorMessage) {
+        <div class="feedback error" role="alert">
+          <strong>Não foi possível liquidar o recebível.</strong>
+          <span>{{ errorMessage }}</span>
+          <span>Você pode tentar novamente para reutilizar a mesma operação.</span>
+        </div>
+      }
+
       @if (isLoading()) {
         <div class="feedback loading" role="status">Carregando recebíveis...</div>
       }
@@ -81,8 +93,20 @@
                   </td>
                   <td>
                     @if (receivable.status === 'AVAILABLE') {
-                      <button type="button" class="action-placeholder" disabled>
-                        Em breve
+                      <button
+                        type="button"
+                        class="settle-button"
+                        [attr.data-receivable-id]="receivable.id"
+                        [disabled]="settlementInProgress() !== null"
+                        (click)="requestSettlement(receivable)"
+                      >
+                        @if (isSettlementInProgress(receivable.id)) {
+                          Liquidando...
+                        } @else if (hasPendingSettlement(receivable.id)) {
+                          Tentar novamente
+                        } @else {
+                          Liquidar
+                        }
                       </button>
                     } @else {
                       <span class="muted-cell">-</span>
