@@ -99,3 +99,10 @@ As comparações entre valores `BigDecimal` deverão considerar seu valor numér
 * A simulação de precificação deve ser realizada de forma síncrona, sem processamento desnecessário.
 * Consultas ao banco devem retornar apenas os dados necessários para cada operação.
 * Operações de liquidação devem concluir em tempo adequado para uso operacional, considerando principalmente o tempo de acesso ao banco.
+
+## Modelo de dados
+
+O `Settlement` possui uma relação 1:1 com `Receivable`, garantindo que cada recebível seja liquidado no máximo uma vez. A tabela `exchange_rates` é mantida de forma independente, pois as taxas são consultadas por vigência no momento da operação, enquanto o valor da taxa efetivamente utilizada é armazenado diretamente no `Settlement` para preservar a rastreabilidade histórica.
+O diagrama abaixo representa o schema atual do banco:
+
+![Diagrama ER](./docs/er.png)
