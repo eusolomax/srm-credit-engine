@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ReceivablesPageComponent } from './features/receivables/receivables-page.component';
 import { AppShellComponent } from './layout/app-shell.component';
 import { PlaceholderPageComponent } from './features/placeholder/placeholder-page.component';
 
@@ -14,12 +15,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'receivables',
-        component: PlaceholderPageComponent,
-        data: {
-          eyebrow: 'Operação',
-          title: 'Recebíveis',
-          description: 'Consulte e cadastre os recebíveis da operação.',
-        },
+        component: ReceivablesPageComponent,
       },
       {
         path: 'pricing',
