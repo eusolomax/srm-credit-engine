@@ -16,7 +16,7 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
             FROM exchange_rates
             WHERE from_currency = :fromCurrency
               AND to_currency = :toCurrency
-              AND effective_at <= CAST(:timestamp AS DATE)
+              AND effective_at <= :timestamp
             ORDER BY effective_at DESC
             LIMIT 1
             """, nativeQuery = true)
