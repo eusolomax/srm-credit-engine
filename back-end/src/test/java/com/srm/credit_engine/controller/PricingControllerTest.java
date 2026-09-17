@@ -62,7 +62,8 @@ class PricingControllerTest {
                 .andExpect(jsonPath("$.faceValue").value(100000.00))
                 .andExpect(jsonPath("$.presentValue").value(92859.94))
                 .andExpect(jsonPath("$.discount").value(7140.06))
-                .andExpect(jsonPath("$.paymentCurrency").value("BRL"));
+                .andExpect(jsonPath("$.paymentCurrency").value("BRL"))
+                .andExpect(jsonPath("$.exchangeRate").doesNotExist());
 
         verify(pricingService).calculatePricing(any(CreatePricingSimulationRequest.class));
     }
@@ -92,7 +93,8 @@ class PricingControllerTest {
                 .andExpect(jsonPath("$.faceValue").value(25000.00))
                 .andExpect(jsonPath("$.presentValue").value(23337.77))
                 .andExpect(jsonPath("$.discount").value(1662.23))
-                .andExpect(jsonPath("$.paymentCurrency").value("BRL"));
+                .andExpect(jsonPath("$.paymentCurrency").value("BRL"))
+                .andExpect(jsonPath("$.exchangeRate").doesNotExist());
 
         verify(pricingService).calculatePricing(any(CreatePricingSimulationRequest.class));
     }
@@ -122,7 +124,8 @@ class PricingControllerTest {
                 .andExpect(jsonPath("$.faceValue").value(18409.09))
                 .andExpect(jsonPath("$.presentValue").value(17094.67))
                 .andExpect(jsonPath("$.discount").value(1314.42))
-                .andExpect(jsonPath("$.paymentCurrency").value("USD"));
+                .andExpect(jsonPath("$.paymentCurrency").value("USD"))
+                .andExpect(jsonPath("$.exchangeRate").value(5.4321));
 
         verify(pricingService).calculatePricing(any(CreatePricingSimulationRequest.class));
     }
