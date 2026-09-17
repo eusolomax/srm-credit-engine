@@ -59,7 +59,7 @@
                   <td class="currency-cell">{{ exchangeRate.fromCurrency }}</td>
                   <td class="currency-cell">{{ exchangeRate.toCurrency }}</td>
                   <td class="rate-cell">{{ formatRate(exchangeRate.rate) }}</td>
-                  <td>{{ exchangeRate.effectiveAt | date: 'dd/MM/yyyy HH:mm' : 'UTC' }}</td>
+                  <td>{{ exchangeRate.effectiveAt | date: 'dd/MM/yyyy HH:mm'}}</td>
                 </tr>
               }
             </tbody>
