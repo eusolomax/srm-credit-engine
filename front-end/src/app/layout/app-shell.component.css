@@ -120,7 +120,7 @@ nav {
 }
 
 .content-container {
-  width: min(100%, 68rem);
+  width: min(100%, 100rem);
   margin: 0 auto;
 }
 

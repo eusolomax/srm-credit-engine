@@ -1,0 +1,212 @@
+<section class="receivables-page" aria-labelledby="receivables-title">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Operação</p>
+      <h1 id="receivables-title">Recebíveis</h1>
+      <p class="page-description">
+        Cadastre e acompanhe os recebíveis disponíveis para operação.
+      </p>
+    </div>
+  </header>
+
+  <div class="page-grid">
+    <section class="panel list-panel" aria-labelledby="receivables-list-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Carteira</p>
+          <h2 id="receivables-list-title">Lista de recebíveis</h2>
+        </div>
+        @if (!isLoading() && !loadError()) {
+          <span class="count-label">{{ receivables().length }} registros</span>
+        }
+      </div>
+
+      @if (isLoading()) {
+        <div class="feedback loading" role="status">Carregando recebíveis...</div>
+      }
+
+      @if (loadError(); as errorMessage) {
+        <div class="feedback error" role="alert">
+          <strong>Não foi possível carregar a lista.</strong>
+          <span>{{ errorMessage }}</span>
+          <button type="button" class="text-button" (click)="loadReceivables()">
+            Tentar novamente
+          </button>
+        </div>
+      }
+
+      @if (!isLoading() && !loadError() && receivables().length === 0) {
+        <div class="feedback empty">
+          <strong>Nenhum recebível cadastrado.</strong>
+          <span>Use o formulário ao lado para adicionar o primeiro registro.</span>
+        </div>
+      }
+
+      @if (!isLoading() && receivables().length > 0) {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Valor de face</th>
+                <th scope="col">Cedente</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Moeda</th>
+                <th scope="col">Prazo</th>
+                <th scope="col">Vencimento</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="visually-hidden">Ações</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (receivable of receivables(); track receivable.id) {
+                <tr>
+                  <td class="id-cell">#{{ receivable.id }}</td>
+                  <td class="amount-cell">
+                    {{ formatMoney(receivable.faceValue, receivable.paymentCurrency) }}
+                  </td>
+                  <td>{{ receivable.assignor }}</td>
+                  <td>{{ typeLabels[receivable.type] }}</td>
+                  <td>{{ receivable.paymentCurrency }}</td>
+                  <td>{{ receivable.termMonths }} meses</td>
+                  <td>{{ receivable.dueDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+                  <td>
+                    <span
+                      class="status-badge"
+                      [class.status-available]="receivable.status === 'AVAILABLE'"
+                      [class.status-settled]="receivable.status === 'SETTLED'"
+                    >
+                      {{ statusLabels[receivable.status] }}
+                    </span>
+                  </td>
+                  <td>
+                    @if (receivable.status === 'AVAILABLE') {
+                      <button type="button" class="action-placeholder" disabled>
+                        Em breve
+                      </button>
+                    } @else {
+                      <span class="muted-cell">-</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="new-receivable-title">
+      <div class="panel-heading">
+        <div>
+          <p class="section-kicker">Novo registro</p>
+          <h2 id="new-receivable-title">Cadastrar recebível</h2>
+        </div>
+      </div>
+
+      @if (successMessage(); as message) {
+        <div class="feedback success" role="status">{{ message }}</div>
+      }
+
+      @if (saveError(); as errorMessage) {
+        <div class="feedback error" role="alert">{{ errorMessage }}</div>
+      }
+
+      <form [formRoot]="receivableForm" (submit)="createReceivable()">
+        <div class="form-field">
+          <label for="faceValue">Valor de face</label>
+          <input
+            id="faceValue"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            placeholder="0,00"
+            [formField]="receivableForm.faceValue"
+          />
+          @if (receivableForm.faceValue().touched() && receivableForm.faceValue().invalid()) {
+            <small class="field-error">Informe um valor maior que zero.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="assignor">Cedente</label>
+          <input
+            id="assignor"
+            type="text"
+            inputmode="numeric"
+            placeholder="CPF ou CNPJ sem máscara"
+            [formField]="receivableForm.assignor"
+          />
+          @if (receivableForm.assignor().touched() && receivableForm.assignor().invalid()) {
+            <small class="field-error">Informe entre 11 e 14 caracteres.</small>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="type">Tipo</label>
+            <select id="type" [formField]="receivableForm.type">
+              <option value="">Selecione</option>
+              <option value="DUPLICATA">Duplicata mercantil</option>
+              <option value="CHEQUE">Cheque pré-datado</option>
+            </select>
+            @if (receivableForm.type().touched() && receivableForm.type().invalid()) {
+              <small class="field-error">Selecione o tipo.</small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="paymentCurrency">Moeda</label>
+            <select
+              id="paymentCurrency"
+              [formField]="receivableForm.paymentCurrency"
+            >
+              <option value="">Selecione</option>
+              <option value="BRL">BRL</option>
+              <option value="USD">USD</option>
+            </select>
+            @if (
+              receivableForm.paymentCurrency().touched() &&
+              receivableForm.paymentCurrency().invalid()
+            ) {
+              <small class="field-error">Selecione a moeda.</small>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="termMonths">Prazo em meses</label>
+            <input
+              id="termMonths"
+              type="number"
+              inputmode="numeric"
+              step="1"
+              placeholder="Ex.: 3"
+              [formField]="receivableForm.termMonths"
+            />
+            @if (receivableForm.termMonths().touched() && receivableForm.termMonths().invalid()) {
+              <small class="field-error">Informe um prazo positivo.</small>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="dueDate">Vencimento</label>
+            <input id="dueDate" type="date" [formField]="receivableForm.dueDate" />
+            @if (receivableForm.dueDate().touched() && receivableForm.dueDate().invalid()) {
+              <small class="field-error">Informe o vencimento.</small>
+            }
+          </div>
+        </div>
+
+        <button class="primary-button" type="submit" [disabled]="isSaving()">
+          @if (isSaving()) {
+            Cadastrando...
+          } @else {
+            Cadastrar recebível
+          }
+        </button>
+      </form>
+    </section>
+  </div>
+</section>
