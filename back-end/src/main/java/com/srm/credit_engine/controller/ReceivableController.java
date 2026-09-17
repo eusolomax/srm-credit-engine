@@ -1,5 +1,6 @@
 package com.srm.credit_engine.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.srm.credit_engine.controller.dto.CreateReceivableRequest;
@@ -39,6 +40,13 @@ public class ReceivableController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.toResponse(savedReceivable));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<ReceivableResponse>> findAll() {
+        List<Receivable> receivables = receivableService.findAll();
+
+        return ResponseEntity.ok(mapper.toResponse(receivables));
     }
 
     @GetMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.srm.credit_engine.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.srm.credit_engine.domain.entity.Receivable;
@@ -22,5 +23,9 @@ public class ReceivableService {
 
     public Optional<Receivable> findById(Long id) {
         return receivableRepository.findById(id);
+    }
+
+    public List<Receivable> findAll() {
+        return receivableRepository.findAll();
     }
 }

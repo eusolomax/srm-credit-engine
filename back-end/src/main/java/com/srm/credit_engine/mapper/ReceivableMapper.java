@@ -7,6 +7,8 @@ import com.srm.credit_engine.domain.entity.Receivable;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ReceivableMapper {
 
@@ -17,4 +19,6 @@ public interface ReceivableMapper {
     Receivable toEntity(CreateReceivableRequest request);
 
     ReceivableResponse toResponse(Receivable receivable);
+    List<ReceivableResponse> toResponse(List<Receivable> receivables);
+
 }
