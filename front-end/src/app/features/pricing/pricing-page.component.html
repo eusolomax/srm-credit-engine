@@ -129,6 +129,12 @@
             <span>Deságio</span>
             <strong>{{ formatMoney(result.discount, 'BRL') }}</strong>
           </div>
+          @if (result.exchangeRate !== null) {
+            <div class="result-item exchange-rate-row">
+              <span>Taxa de câmbio</span>
+              <strong>{{ formatExchangeRate(result.exchangeRate) }}</strong>
+            </div>
+          }
           <div class="result-item currency-row">
             <span>Moeda de pagamento</span>
             <strong>{{ result.paymentCurrency }}</strong>

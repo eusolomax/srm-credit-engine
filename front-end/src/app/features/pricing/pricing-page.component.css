@@ -211,6 +211,10 @@ input::placeholder {
   border-bottom: 0;
 }
 
+.result-item.exchange-rate-row {
+  color: #173f5f;
+}
+
 @media (max-width: 800px) {
   .page-grid {
     grid-template-columns: 1fr;

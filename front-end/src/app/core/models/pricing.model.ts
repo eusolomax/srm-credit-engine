@@ -13,4 +13,5 @@ export interface PricingSimulationResponse {
   presentValue: number;
   discount: number;
   paymentCurrency: CurrencyCode;
+  exchangeRate: number | null;
 }
