@@ -135,7 +135,7 @@
                 <td class="amount-cell">{{ formatMoney(settlement.discount, 'BRL') }}</td>
                 <td>{{ settlement.paymentCurrency }}</td>
                 <td>{{ formatExchangeRate(settlement.exchangeRate) }}</td>
-                <td>{{ settlement.settledAt | date: 'dd/MM/yyyy HH:mm' : 'UTC' }}</td>
+                <td>{{ settlement.settledAt | date: 'dd/MM/yyyy HH:mm'}}</td>
               </tr>
             }
           </tbody>
