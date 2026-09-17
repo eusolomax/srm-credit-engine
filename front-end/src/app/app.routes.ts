@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { PricingPageComponent } from './features/pricing/pricing-page.component';
 import { ReceivablesPageComponent } from './features/receivables/receivables-page.component';
+import { SettlementsPageComponent } from './features/settlements/settlements-page.component';
 import { AppShellComponent } from './layout/app-shell.component';
 import { PlaceholderPageComponent } from './features/placeholder/placeholder-page.component';
 
@@ -24,12 +25,7 @@ export const routes: Routes = [
       },
       {
         path: 'settlements',
-        component: PlaceholderPageComponent,
-        data: {
-          eyebrow: 'Acompanhamento',
-          title: 'Settlements',
-          description: 'Consulte o extrato de liquidações realizadas.',
-        },
+        component: SettlementsPageComponent,
       },
       {
         path: 'exchange-rates',

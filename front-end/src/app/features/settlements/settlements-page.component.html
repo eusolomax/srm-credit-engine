@@ -1,0 +1,146 @@
+<section class="settlements-page" aria-labelledby="settlements-title">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">Acompanhamento</p>
+      <h1 id="settlements-title">Extrato de liquidações</h1>
+      <p class="page-description">
+        Consulte as liquidações realizadas por período, cedente ou moeda.
+      </p>
+    </div>
+  </header>
+
+  <section class="panel filters-panel" aria-labelledby="filters-title">
+    <div class="panel-heading">
+      <div>
+        <p class="section-kicker">Consulta</p>
+        <h2 id="filters-title">Filtros do extrato</h2>
+      </div>
+    </div>
+
+    <form (submit)="submitFilters($event)">
+      <div class="form-field">
+        <label for="assignor">Cedente</label>
+        <input
+          id="assignor"
+          type="text"
+          inputmode="numeric"
+          placeholder="Cedente sem máscara"
+          [formField]="filtersForm.assignor"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="currency">Moeda</label>
+        <select id="currency" [formField]="filtersForm.currency">
+          <option value="">Todas</option>
+          <option value="BRL">BRL</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="from">Data inicial</label>
+        <input id="from" type="date" [formField]="filtersForm.from" />
+      </div>
+
+      <div class="form-field">
+        <label for="to">Data final</label>
+        <input id="to" type="date" [formField]="filtersForm.to" />
+      </div>
+
+      <div class="filter-actions">
+                <button class="primary-button" type="submit" [disabled]="isLoading()">
+          @if (isLoading()) {
+            Consultando...
+          } @else {
+            Consultar
+          }
+        </button>
+        
+        <button
+          class="secondary-button"
+          type="button"
+          [disabled]="isLoading() || !hasFilters()"
+          (click)="clearFilters()"
+        >
+          Limpar filtros
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel results-panel" aria-labelledby="results-title">
+    <div class="panel-heading">
+      <div>
+        <p class="section-kicker">Resultado</p>
+        <h2 id="results-title">Liquidações realizadas</h2>
+      </div>
+      @if (hasSearched() && !isLoading() && !errorMessage()) {
+        <span class="count-label">{{ settlements().length }} registros</span>
+      }
+    </div>
+
+    @if (isLoading()) {
+      <div class="feedback loading" role="status">Carregando liquidações...</div>
+    }
+
+    @if (errorMessage(); as message) {
+      <div class="feedback error" role="alert">
+        <strong>Não foi possível carregar o extrato.</strong>
+        <span>{{ message }}</span>
+        <button type="button" class="text-button" (click)="querySettlements()">
+          Tentar novamente
+        </button>
+      </div>
+    }
+
+    @if (!hasSearched() && !isLoading()) {
+      <div class="feedback initial">
+        <strong>Nenhuma consulta realizada.</strong>
+        <span>Use os filtros ou consulte sem preenchê-los para ver o extrato.</span>
+      </div>
+    }
+
+    @if (hasSearched() && !isLoading() && !errorMessage() && settlements().length === 0) {
+      <div class="feedback empty">
+        <strong>Nenhuma liquidação encontrada.</strong>
+        <span>Tente alterar os filtros da consulta.</span>
+      </div>
+    }
+
+    @if (hasSearched() && !isLoading() && !errorMessage() && settlements().length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Recebível</th>
+              <th scope="col">Cedente</th>
+              <th scope="col">Valor de face</th>
+              <th scope="col">Valor presente</th>
+              <th scope="col">Deságio</th>
+              <th scope="col">Moeda</th>
+              <th scope="col">Câmbio</th>
+              <th scope="col">Liquidado em</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (settlement of settlements(); track settlement.receivableId) {
+              <tr>
+                <td class="reference-cell">#{{ settlement.receivableId }}</td>
+                <td>{{ settlement.assignor }}</td>
+                <td class="amount-cell">{{ formatMoney(settlement.faceValue, 'BRL') }}</td>
+                <td class="amount-cell">
+                  {{ formatMoney(settlement.presentValue, settlement.paymentCurrency) }}
+                </td>
+                <td class="amount-cell">{{ formatMoney(settlement.discount, 'BRL') }}</td>
+                <td>{{ settlement.paymentCurrency }}</td>
+                <td>{{ formatExchangeRate(settlement.exchangeRate) }}</td>
+                <td>{{ settlement.settledAt | date: 'dd/MM/yyyy HH:mm' : 'UTC' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</section>
