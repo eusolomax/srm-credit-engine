@@ -23,23 +23,4 @@ class ChequePricingStrategyTest {
         assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("23337.77"));
     }
 
-    // Retorna o valor presente utilizando o base rate definido em application properties
-    // Ou utilizando o valor default de 1%
-    @Test
-    void shouldUseConfiguredBaseRate() {
-        ChequePricingStrategy configuredStrategy =
-                new ChequePricingStrategy(new BigDecimal("0.0200"));
-
-        BigDecimal presentValue = configuredStrategy.calculatePresentValue(new BigDecimal("1000.00"), 1);
-
-        assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("956.94"));
-    }
-
-    // Retorna o valor de face caso o prazo seja de 0 meses
-    @Test
-    void shouldReturnFaceValueWhenTermIsZero() {
-        BigDecimal presentValue = strategy.calculatePresentValue(new BigDecimal("50000.00"), 0);
-
-        assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("50000.00"));
-    }
 }

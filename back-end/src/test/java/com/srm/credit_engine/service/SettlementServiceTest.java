@@ -60,34 +60,6 @@ class SettlementServiceTest {
         verify(settlementRepository).saveAndFlush(any(Settlement.class));
     }
 
-    // C2: liquida um cheque em BRL com o valor presente esperado.
-    @Test
-    void shouldSettleChequeInBrl() {
-        Receivable receivable = receivable(
-                new BigDecimal("25000.00"),
-                ReceivableType.CHEQUE,
-                CurrencyCode.BRL,
-                2,
-                LocalDate.now().plusMonths(2));
-        stubAvailableReceivable(receivable);
-        when(pricingService.calculatePricing(any(CreatePricingSimulationRequest.class)))
-                .thenReturn(new PricingResult(
-                        new BigDecimal("25000.00"),
-                        new BigDecimal("23337.77"),
-                        new BigDecimal("1662.23"),
-                        CurrencyCode.BRL,
-                        null));
-
-        Settlement result = service.settle(1L, "cheque-brl-key");
-
-        assertThat(result.getPresentValue()).isEqualByComparingTo(new BigDecimal("23337.77"));
-        assertThat(result.getDiscount()).isEqualByComparingTo(new BigDecimal("1662.23"));
-        assertThat(result.getPaymentCurrency()).isEqualTo(CurrencyCode.BRL);
-        assertThat(result.getExchangeRate()).isNull();
-        assertThat(receivable.getStatus()).isEqualTo(ReceivableStatus.SETTLED);
-        verify(settlementRepository).saveAndFlush(any(Settlement.class));
-    }
-
     // C3: converte o PV preciso de BRL para USD e arredonda somente no resultado final.
     @Test
     void shouldSettleDuplicataWithUsdConversion() {

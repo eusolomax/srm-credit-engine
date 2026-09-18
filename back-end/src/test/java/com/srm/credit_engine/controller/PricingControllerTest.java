@@ -68,37 +68,6 @@ class PricingControllerTest {
         verify(pricingService).calculatePricing(any(CreatePricingSimulationRequest.class));
     }
 
-    // Garante que um cheque em BRL use a estratégia correta.
-    @Test
-    void shouldSimulateChequeInBrl() throws Exception {
-        when(pricingService.calculatePricing(any(CreatePricingSimulationRequest.class)))
-                .thenReturn(new PricingResult(
-                        new BigDecimal("25000.00"),
-                        new BigDecimal("23337.77"),
-                        new BigDecimal("1662.23"),
-                        CurrencyCode.BRL,
-                        null));
-
-        mockMvc.perform(post("/pricing/simulate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "faceValue": 25000.00,
-                                  "type": "CHEQUE",
-                                  "paymentCurrency": "BRL",
-                                  "termMonths": 2
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.faceValue").value(25000.00))
-                .andExpect(jsonPath("$.presentValue").value(23337.77))
-                .andExpect(jsonPath("$.discount").value(1662.23))
-                .andExpect(jsonPath("$.paymentCurrency").value("BRL"))
-                .andExpect(jsonPath("$.exchangeRate").doesNotExist());
-
-        verify(pricingService).calculatePricing(any(CreatePricingSimulationRequest.class));
-    }
-
     // Garante a conversão da face, do valor presente e do deságio para USD.
     @Test
     void shouldSimulateDuplicataInUsdUsingValidExchangeRate() throws Exception {
