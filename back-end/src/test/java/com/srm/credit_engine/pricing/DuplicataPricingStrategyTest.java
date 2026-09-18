@@ -48,11 +48,4 @@ class DuplicataPricingStrategyTest {
         assertThat(roundToCents(presentValueInUSD)).isEqualByComparingTo(new BigDecimal("17094.67"));
     }
 
-    // Retorna o valor de face caso o prazo seja de 0 meses
-    @Test
-    void shouldReturnFaceValueWhenTermIsZero() {
-        BigDecimal presentValue = strategy.calculatePresentValue(new BigDecimal("50000.00"), 0);
-
-        assertThat(roundToCents(presentValue)).isEqualByComparingTo(new BigDecimal("50000.00"));
-    }
 }

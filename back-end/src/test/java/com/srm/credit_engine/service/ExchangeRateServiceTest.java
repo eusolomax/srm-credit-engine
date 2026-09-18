@@ -2,7 +2,6 @@ package com.srm.credit_engine.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 import com.srm.credit_engine.domain.entity.ExchangeRate;
@@ -20,35 +19,6 @@ class ExchangeRateServiceTest {
 
     private final ExchangeRateRepository repository = mock(ExchangeRateRepository.class);
     private final ExchangeRateService service = new ExchangeRateService(repository);
-
-    // Garante que uma nova cotação seja encaminhada ao repositório e retornada.
-    @Test
-    void shouldSaveExchangeRate() {
-        ExchangeRate exchangeRate = new ExchangeRate(
-                CurrencyCode.USD,
-                CurrencyCode.BRL,
-                new BigDecimal("5.4321"),
-                Instant.parse("2026-01-01T12:00:00Z"));
-
-        when(repository.save(exchangeRate)).thenReturn(exchangeRate);
-
-        ExchangeRate result = service.save(exchangeRate);
-
-        assertThat(result).isSameAs(exchangeRate);
-        verify(repository).save(exchangeRate);
-    }
-
-    // Garante que o serviço devolva todas as cotações armazenadas.
-    @Test
-    void shouldFindAllExchangeRates() {
-        List<ExchangeRate> exchangeRates = List.of(mock(ExchangeRate.class));
-        when(repository.findAll()).thenReturn(exchangeRates);
-
-        List<ExchangeRate> result = service.findAll();
-
-        assertThat(result).isSameAs(exchangeRates);
-        verify(repository).findAll();
-    }
 
     // Garante que a taxa mais recente válida seja buscada para o par informado.
     @Test

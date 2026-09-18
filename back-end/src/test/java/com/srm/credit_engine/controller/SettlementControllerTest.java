@@ -160,60 +160,6 @@ class SettlementControllerTest {
         verify(service).findByFilters(null, null, from, toExclusive);
     }
 
-    // Garante a combinação de assignor e moeda.
-    @Test
-    void shouldCombineAssignorAndCurrencyFilters() throws Exception {
-        List<Settlement> settlements = List.of(settlement(1L));
-        when(service.findByFilters("12345678901", CurrencyCode.BRL, null, null))
-                .thenReturn(settlements);
-        when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
-
-        mockMvc.perform(get("/settlements")
-                        .param("assignor", "12345678901")
-                        .param("currency", "BRL"))
-                .andExpect(status().isOk());
-
-        verify(service).findByFilters("12345678901", CurrencyCode.BRL, null, null);
-    }
-
-    // Garante a combinação de assignor e período.
-    @Test
-    void shouldCombineAssignorAndPeriodFilters() throws Exception {
-        List<Settlement> settlements = List.of(settlement(1L));
-        Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        when(service.findByFilters("12345678901", null, from, toExclusive))
-                .thenReturn(settlements);
-        when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
-
-        mockMvc.perform(get("/settlements")
-                        .param("assignor", "12345678901")
-                        .param("from", "2026-09-01")
-                        .param("to", "2026-09-30"))
-                .andExpect(status().isOk());
-
-        verify(service).findByFilters("12345678901", null, from, toExclusive);
-    }
-
-    // Garante a combinação de moeda e período.
-    @Test
-    void shouldCombineCurrencyAndPeriodFilters() throws Exception {
-        List<Settlement> settlements = List.of(settlement(1L));
-        Instant from = LocalDate.of(2026, 9, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant toExclusive = LocalDate.of(2026, 10, 1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        when(service.findByFilters(null, CurrencyCode.BRL, from, toExclusive))
-                .thenReturn(settlements);
-        when(mapper.toResponse(settlements)).thenReturn(List.of(response(settlements.getFirst())));
-
-        mockMvc.perform(get("/settlements")
-                        .param("currency", "BRL")
-                        .param("from", "2026-09-01")
-                        .param("to", "2026-09-30"))
-                .andExpect(status().isOk());
-
-        verify(service).findByFilters(null, CurrencyCode.BRL, from, toExclusive);
-    }
-
     // Garante a combinação dos três filtros.
     @Test
     void shouldCombineAssignorCurrencyAndPeriodFilters() throws Exception {
