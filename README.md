@@ -12,10 +12,12 @@ O sistema contempla o ciclo principal de um recebível: cadastro, precificação
 
 - Java 21
 - Spring Boot
-- Spring Data JPA
+- Maven
+
+### Database
+
 - PostgreSQL
 - H2
-- Maven
 
 ### Frontend
 
@@ -84,13 +86,6 @@ Nesse caso, é necessário ter um PostgreSQL disponível e criar o banco:
 CREATE DATABASE srm_credit_engine;
 ```
 
-### Profiles disponíveis
-
-| Profile    | Banco         | Execução                                                     |
-| ---------- | ------------- | ------------------------------------------------------------ |
-| `h2`       | H2 em memória | `./mvnw spring-boot:run`                                     |
-| `postgres` | PostgreSQL    | Variáveis `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` + profile `postgres` |
-
 O H2 é utilizado por padrão para simplificar a execução do projeto. O PostgreSQL permanece disponível como alternativa para execução com banco relacional externo.
 
 ---
@@ -112,7 +107,7 @@ npm install
 Inicie a aplicação:
 
 ```bash
-ng serve
+npm run start
 ```
 
 A aplicação estará disponível em:
